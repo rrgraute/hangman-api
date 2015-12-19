@@ -16,7 +16,7 @@ class DefaultController extends Controller
     }
 
     /**
-    * @Route("/test")
+    * @Route("/games")
     */
     public function newGameAction()
     {
