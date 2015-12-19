@@ -85,7 +85,7 @@ class session
     }
 
     /**
-     * Set wordId
+     * Set word
      *
      * @param string $word
      *
@@ -99,7 +99,7 @@ class session
     }
 
     /**
-     * Get wordId
+     * Get word
      *
      * @return string
      */
