@@ -2,3 +2,7 @@ services:
 #    hangman.example:
 #        class: HangmanBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+    game_logic:
+        class: HangmanBundle\service\GameLogic
+        arguments: ['@doctrine.orm.entity_manager', 'HangmanBundle\Entity\session']
