@@ -43,6 +43,14 @@ class GameLogic{
         }
     }
 
+    public function apply_guess($session_info) {
+        //do we have guessed words?
+        $unique_id = $session_info->getUniqueId();
+        $guessed_words = $this->em
+        ->getRepository("HangmanBundle:guess")
+        ->findBySessionUniqueId($unique_id);
+    }
+
 
     public function getMax()
     {

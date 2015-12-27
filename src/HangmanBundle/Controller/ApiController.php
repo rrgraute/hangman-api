@@ -27,6 +27,7 @@ class ApiController extends Controller
             $session->setUniqueId($user_id);
             $session->setWord($word);
             $session->setStatus("busy");
+            $session->setTriesLeft(11);
             $session->setTs(new \DateTime("now"));
             $entity = $this->getDoctrine()->getManager();
             $entity->persist($session);
@@ -36,10 +37,32 @@ class ApiController extends Controller
                 $new_game_info = array();
                 $new_game_info["user_id"] = $session->getUniqueId();
                 $new_game_info["status"] = $session->getStatus();
+                $new_game_info["tries_left"] = $session->getTriesLeft();
                 $new_game_info["word"] = $game_logic->word_progress(false, $session->getWord() );
                 return new JsonResponse($new_game_info);
             }
         }
         return false;
+    }
+
+    /**
+    * @Route("/api/guess/{user_id}/{guess}")
+    * @Method("GET")
+    */
+    public function guessAction($user_id, $guess)
+    {
+        $session_info = $this->getDoctrine()
+        ->getRepository("HangmanBundle:session")
+        ->findOneBy( array("uniqueId" => (string)$user_id, "status" => "busy") );
+        if ($session_info) {
+
+            $game_logic = $this->get("game_logic");
+            $tries_left = $session_info->getTriesLeft();
+            if($tries_left > 0) {
+                $apply_guess_status = $game_logic->apply_guess($session_info);
+            } else {
+
+            }
+        }
     }
 }
