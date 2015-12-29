@@ -22,9 +22,9 @@ class guess
     private $id;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="session_unique_id", type="integer")
+     * @ORM\Column(name="session_unique_id", type="string", length=255)
      */
     private $sessionUniqueId;
 
@@ -94,4 +94,3 @@ class guess
         return $this->guess;
     }
 }
-
