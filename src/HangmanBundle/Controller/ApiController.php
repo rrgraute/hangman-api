@@ -38,7 +38,7 @@ class ApiController extends Controller
                 $new_game_info["user_id"] = $session->getUniqueId();
                 $new_game_info["status"] = $session->getStatus();
                 $new_game_info["tries_left"] = $session->getTriesLeft();
-                $new_game_info["word"] = $game_logic->word_progress(false, $session->getWord() );
+                $new_game_info["word"] = $game_logic->word_progress($session->getWord(), false );
                 return new JsonResponse($new_game_info);
             }
         }
@@ -59,7 +59,7 @@ class ApiController extends Controller
             $game_logic = $this->get("game_logic");
             $tries_left = $session_info->getTriesLeft();
             if($tries_left > 0) {
-                $apply_guess_status = $game_logic->apply_guess($session_info);
+                $apply_guess_status = $game_logic->do_guess($session_info, $guess);
             } else {
 
             }

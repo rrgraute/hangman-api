@@ -30,25 +30,30 @@ class GameLogic{
         }
     }
 
-    public function word_progress($session_id, $word_guessing = false) {
-        if($word_guessing) {
+    public function word_progress($word_guessing, $word_progress = false) {
+        if($word_guessing && !$word_progress) {
             $string_length = strlen($word_guessing);
-            $word_progress = "";
+            $new_word_progress = "";
             for($i = 1; $i <= $string_length; $i++) {
-                $word_progress .= ".";
+                $new_word_progress .= ".";
             }
-            return $word_progress;
-        } else {
-
+            return $new_word_progress;
+        } elseif($word_guessing && is_array($word_progress)) {
+            $guessing_word = explode($word_guessing);
+            print_r($guessing_word); exit;
         }
     }
 
-    public function apply_guess($session_info) {
+    public function do_guess($session_info, $guess) {
         //do we have guessed words?
         $unique_id = $session_info->getUniqueId();
         $guessed_words = $this->em
         ->getRepository("HangmanBundle:guess")
         ->findBySessionUniqueId($unique_id);
+
+        print_r($guessed_words); exit;
+        if( !empty($guessed_words) ) {
+        }
     }
 
 
