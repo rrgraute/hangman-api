@@ -29,7 +29,7 @@ class GameLogic{
         }
     }
 
-    public function word_progress($word_guessing, $already_guessed) {
+    public function word_progress($word_guessing, $already_guessed = false) {
 
         if($already_guessed) {
             $word_guessing_array = str_split($word_guessing);
@@ -52,7 +52,7 @@ class GameLogic{
         }
     }
 
-    public function get_session_raport($session_info, $word_progress) {
+    public function get_session_raport($session_info, $word_progress = false) {
         $game_status = array();
         if($word_progress) {
             $game_status["word"] = $word_progress;
@@ -62,6 +62,7 @@ class GameLogic{
         }
         $game_status["tries_left"] = $session_info->getTriesLeft();
         $game_status["status"] = $session_info->getStatus();
+        $game_status["session_id"] = $session_info->getUniqueId();
 
         return $game_status;
     }
