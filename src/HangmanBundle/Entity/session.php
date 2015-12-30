@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class session
 {
     /**
-     * @var int
+     * @var integer
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -29,7 +29,7 @@ class session
     private $uniqueId;
 
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Column(name="word", type="string", length=11)
      */
@@ -43,6 +43,13 @@ class session
     private $status;
 
     /**
+    * @var integereger
+    *
+    * @ORM\Column(name="tries_left", type="integer", length=2)
+    */
+    private $triesLeft;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="ts", type="datetime")
@@ -53,7 +60,7 @@ class session
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -154,5 +161,29 @@ class session
     public function getTs()
     {
         return $this->ts;
+    }
+
+    /**
+     * Set triesLeft
+     *
+     * @param integer $triesLeft
+     *
+     * @return session
+     */
+    public function setTriesLeft($triesLeft)
+    {
+        $this->triesLeft = $triesLeft;
+
+        return $this;
+    }
+
+    /**
+     * Get triesLeft
+     *
+     * @return integer
+     */
+    public function getTriesLeft()
+    {
+        return $this->triesLeft;
     }
 }
