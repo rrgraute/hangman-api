@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use HangmanBundle\Entity\session;
+use HangmanBundle\Entity\guess;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class ApiController extends Controller
@@ -51,18 +52,33 @@ class ApiController extends Controller
     */
     public function guessAction($user_id, $guess)
     {
-        $session_info = $this->getDoctrine()
-        ->getRepository("HangmanBundle:session")
-        ->findOneBy( array("uniqueId" => (string)$user_id, "status" => "busy") );
-        if ($session_info) {
+        $game_logic = $this->get("game_logic");
+        if( $game_logic->valid_guess($guess) ) {
+            $session_info = $this->getDoctrine()
+            ->getRepository("HangmanBundle:session")
+            ->findOneBy( array("uniqueId" => (string)$user_id, "status" => "busy") );
 
-            $game_logic = $this->get("game_logic");
-            $tries_left = $session_info->getTriesLeft();
-            if($tries_left > 0) {
-                $apply_guess_status = $game_logic->do_guess($session_info, $guess);
-            } else {
+            if ($session_info) {
+                $tries_left = $session_info->getTriesLeft();
+                if($tries_left > 0) {
+                    if( !$game_logic->already_guessed($session_info, $guess) ) {
+                        $new_guess = new guess();
+                        $new_guess->setGuess($guess);
+                        $new_guess->setSessionUniqueId( $session_info->getUniqueId() );
+                        $entity = $this->getDoctrine()->getManager();
+                        $entity->persist($new_guess);
+                        $apply_guess = $entity->flush();
+                        print_r($apply_guess); exit;
+                    } else {
+                        return new JsonResponse( array("error") );
+                    }
 
+                } else {
+                    return new JsonResponse( array("status" => "failed") );
+                }
             }
+        } else{
+            return new JsonResponse( array("error" => "not a valid entery") );
         }
     }
 }
