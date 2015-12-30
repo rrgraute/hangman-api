@@ -35,11 +35,7 @@ class ApiController extends Controller
             $entity->flush();
             if($entity) {
                 //saved into DB? return the game info
-                $new_game_info = array();
-                $new_game_info["user_id"] = $session->getUniqueId();
-                $new_game_info["status"] = $session->getStatus();
-                $new_game_info["tries_left"] = $session->getTriesLeft();
-                $new_game_info["word"] = $game_logic->word_progress($session->getWord(), false );
+                $new_game_info = $game_logic->get_session_raport($session, $game_logic->word_progress( $session->getWord() ) );
                 return new JsonResponse($new_game_info);
             }
         }
@@ -59,7 +55,7 @@ class ApiController extends Controller
 
             if ($session_info) {
                 $tries_left = $session_info->getTriesLeft();
-                if($session_info->getStatus() == "success") {
+                if($session_info->getStatus() !== "busy") {
                     return new JsonResponse( $game_logic->get_session_raport($session_info, false) );
                 }
                 if($tries_left > 0) {
@@ -73,6 +69,12 @@ class ApiController extends Controller
                         if($apply_guess) {
                             if( !$game_logic->guessed_correct($session_info->getWord(), $guess) ) {
                                 $session_info->setTriesLeft(--$tries_left);
+                                if($session_info->getTriesLeft() === 0) {
+                                    $session_info->setStatus("failed");
+                                    $em->flush();
+                                    $game_status_report = $game_logic->get_session_raport($session_info);
+                                    return new JsonResponse($game_status_report);
+                                }
                                 $em->flush();
                             }
                             $already_guessed_array = $game_logic->get_already_guessed($session_info);
@@ -89,10 +91,6 @@ class ApiController extends Controller
                     } else {
                         return new JsonResponse(array("error" => "already guessed") );
                     }
-                } else {
-                    $session_info->setStatus("failed");
-                    $em->flush();
-                    return new JsonResponse( $game_logic->get_session_raport($session_info, false) );
                 }
             } else {
                 return new JsonResponse( array("error" => "session not found") );
